@@ -23,6 +23,7 @@ SELECT VT.painter_id,sum(VT.painter_point) volumes,0 scan_point,0 bonus_point,0 
 FROM volume_tranfers VT
 WHERE  DATE_FORMAT(VT.created_at, '%Y-%m-%d') <= '$end_date'
 AND DATE_FORMAT(VT.created_at, '%Y-%m-%d') >= '$start_date'
+  AND is_painter_redeem=0
 AND VT.status !=2
 GROUP BY VT.painter_id
 UNION all
@@ -30,12 +31,14 @@ SELECT SP.painter_id, 0 volumes,sum(SP.point) scan_point,0 bonus_point,0 paid,0 
 FROM scan_points SP
 WHERE  DATE_FORMAT(SP.created_at, '%Y-%m-%d')  <= '$end_date'
 AND DATE_FORMAT(SP.created_at, '%Y-%m-%d') >= '$start_date'
+  AND is_redeem=0
 GROUP BY SP.painter_id
 UNION all
 SELECT BP.painter_id,0 volumes,0 scan_point,sum(BP.bonus_point) bonus_point,0 paid,0 un_paid
 FROM bonus_points BP
 WHERE DATE_FORMAT(BP.created_at, '%Y-%m-%d')  <= '$end_date'
 AND DATE_FORMAT(BP.created_at, '%Y-%m-%d') >= '$start_date'
+  AND is_redeem=0
 AND BP.soft_delete=1
 GROUP BY BP.painter_id
 UNION all
