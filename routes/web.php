@@ -34,4 +34,6 @@ Route::get('PainterTest',[\App\Http\Controllers\PointController::class, 'Painter
 
 Route::get('painterRedeemUpdate',[\App\Http\Controllers\PointController::class, 'updateVolumeData']);
 
+Route::get('process', [\App\Http\Controllers\RedeemController::class, 'startRedeem']);
+
 
