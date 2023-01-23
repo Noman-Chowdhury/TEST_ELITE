@@ -14,6 +14,34 @@ class RedeemController extends Controller
         $code = $this->generateRandomString();
         $start_date = '2022-09-01';
         $end_date = '2022-09-30';
+        if (\request()->painter) {
+            $this->painterQuery($code, $start_date, $end_date);
+        } else {
+           return $this->dealerQuery($code, $start_date, $end_date);
+        }
+        return 'done';
+    }
+
+    function generateRandomString($prefix = false, $length = 6)
+    {
+        $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        $charactersLength = strlen($characters);
+        $randomString = '';
+        for ($i = 0; $i < $length; $i++) {
+            $randomString .= $characters[rand(0, $charactersLength - 1)];
+        }
+        if ($prefix) {
+            $randomString = $prefix . '-' . $randomString;
+        }
+        $exists = DB::table('redeem_points')->where('transaction_code', $randomString)->exists();
+        if ($exists) {
+            $this->generateRandomString();
+        }
+        return strtoupper($randomString);
+    }
+
+    function painterQuery($code, $start_date, $end_date)
+    {
         $query =
             "SELECT a.painter_id,(a.volumes) volumes,SUM(a.scan_point) total_scan_point,SUM(a.bonus_point) bonus_point,
  (SUM(a.scan_point) + SUM(a.volumes) + SUM(a.bonus_point)) as redeem_point,
@@ -54,7 +82,7 @@ GROUP BY a.painter_id,p.code,p.name,p.phone;
             return $d->painter_id;
         });
         $painters = collect(DB::table('painter_users')->whereNotIn('id', $painter_ids)->get());
-        $painter = $painters->map(function ($p) use ($code) {
+        $painter = $painters->map(function ($p) use ($code,$start_date,$end_date) {
             return [
                 'painter_id' => $p->id,
                 'volumes' => 0,
@@ -63,6 +91,8 @@ GROUP BY a.painter_id,p.code,p.name,p.phone;
                 'redeem_point' => 0,
                 'total_point' => 0,
                 'transaction_code' => $code,
+                'start_date' => $start_date,
+                'end_date' => $end_date,
             ];
         })->toArray();
         DB::table('redeem_points')->insert($int);
@@ -76,24 +106,74 @@ GROUP BY a.painter_id,p.code,p.name,p.phone;
         DB::table('bonus_points')->whereNotNull('painter_id')->whereDate('created_at', '<=', $end_date)->whereDate('created_at', '>=', $start_date)->update([
             'is_redeem' => $code
         ]);
-        return 'done';
+
     }
 
-    function generateRandomString($prefix = false, $length = 6)
+    function dealerQuery($code, $start_date, $end_date)
     {
-        $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
-        $charactersLength = strlen($characters);
-        $randomString = '';
-        for ($i = 0; $i < $length; $i++) {
-            $randomString .= $characters[rand(0, $charactersLength - 1)];
-        }
-        if ($prefix) {
-            $randomString = $prefix . '-' . $randomString;
-        }
-        $exists = DB::table('redeem_points')->where('transaction_code', $randomString)->exists();
-        if ($exists) {
-            $this->generateRandomString();
-        }
-        return strtoupper($randomString);
+        $query =
+            "SELECT a.dealer_id,(a.volumes) volumes,SUM(a.scan_point) total_scan_point,SUM(a.bonus_point) bonus_point,
+ (SUM(a.scan_point) + SUM(a.volumes) + SUM(a.bonus_point)) as redeem_point,
+ (SUM(a.scan_point) + SUM(a.volumes) + SUM(a.bonus_point)) as total_point, '$code' as transaction_code, '$start_date' as start_date, '$end_date' as end_date
+FROM (
+SELECT VT.dealer_id,sum(VT.dealer_point) volumes,0 scan_point,0 bonus_point
+FROM volume_tranfers VT
+WHERE  DATE_FORMAT(VT.created_at, '%Y-%m-%d') <= '$end_date'
+AND DATE_FORMAT(VT.created_at, '%Y-%m-%d') >= '$start_date'
+  AND is_dealer_redeem IS NULL
+AND VT.status !=2
+GROUP BY VT.dealer_id
+UNION all
+SELECT SP.dealer_id, 0 volumes,sum(SP.point) scan_point,0 bonus_point
+FROM scan_points SP
+WHERE  DATE_FORMAT(SP.created_at, '%Y-%m-%d')  <= '$end_date'
+AND DATE_FORMAT(SP.created_at, '%Y-%m-%d') >= '$start_date'
+  AND is_redeem IS NULL
+GROUP BY SP.dealer_id
+UNION all
+SELECT BP.dealer_id,0 volumes,0 scan_point,sum(BP.bonus_point) bonus_point
+FROM bonus_points BP
+WHERE DATE_FORMAT(BP.created_at, '%Y-%m-%d')  <= '$end_date'
+AND DATE_FORMAT(BP.created_at, '%Y-%m-%d') >= '$start_date'
+  AND is_redeem IS NULL
+AND BP.soft_delete=1
+GROUP BY BP.painter_id) a,dealer_users p
+WHERE a.dealer_id=p.id
+GROUP BY a.dealer_id,p.code,p.name,p.phone;
+";
+        $all_data = DB::select(DB::raw($query));
+        $datas = collect($all_data);
+        $int = $datas->map(function ($ttt) {
+            return (array)$ttt;
+        })->toArray();
+
+        $dealer_ids = $datas->map(function ($d) {
+            return $d->dealer_id;
+        });
+        $dealers = collect(DB::table('dealer_users')->whereNotIn('id', $dealer_ids)->get());
+        $dealer = $dealers->map(function ($p) use ($code,$start_date,$end_date) {
+            return [
+                'dealer_id' => $p->id,
+                'volumes' => 0,
+                'total_scan_point' => 0,
+                'bonus_point' => 0,
+                'redeem_point' => 0,
+                'total_point' => 0,
+                'transaction_code' => $code,
+                'start_date' => $start_date,
+                'end_date' => $end_date,
+            ];
+        })->toArray();
+        DB::table('redeem_points')->insert($int);
+        DB::table('redeem_points')->insert($dealer);
+        DB::table('volume_tranfers')->whereDate('created_at', '<=', $end_date)->whereDate('created_at', '>=', $start_date)->update([
+            'is_dealer_redeem' => $code
+        ]);
+        DB::table('scan_points')->whereNotNull('dealer_id')->whereDate('created_at', '<=', $end_date)->whereDate('created_at', '>=', $start_date)->update([
+            'is_redeem' => $code
+        ]);
+        DB::table('bonus_points')->whereNotNull('dealer_id')->whereDate('created_at', '<=', $end_date)->whereDate('created_at', '>=', $start_date)->update([
+            'is_redeem' => $code
+        ]);
     }
 }
