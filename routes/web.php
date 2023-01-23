@@ -36,4 +36,8 @@ Route::get('painterRedeemUpdate',[\App\Http\Controllers\PointController::class, 
 
 Route::get('process', [\App\Http\Controllers\RedeemController::class, 'startRedeem']);
 
+Route::get('backup-database', function (){
+   return \Illuminate\Support\Facades\Artisan::call('backup:run --only-db');
+});
+
 
