@@ -70,6 +70,9 @@ AND DATE_FORMAT(BP.created_at, '%Y-%m-%d') >= '$start_date'
 AND BP.soft_delete=1
 GROUP BY BP.painter_id) a,painter_users p
 WHERE a.painter_id=p.id
+AND p.disable=1
+AND p.status=1
+AND p.soft_delete=1
 GROUP BY a.painter_id,p.code,p.name,p.phone;
 ";
         $all_data = DB::select(DB::raw($query));
@@ -139,6 +142,9 @@ AND DATE_FORMAT(BP.created_at, '%Y-%m-%d') >= '$start_date'
 AND BP.soft_delete=1
 GROUP BY BP.painter_id) a,dealer_users p
 WHERE a.dealer_id=p.id
+AND p.disable=1
+AND p.status=1
+AND p.soft_delete=1
 GROUP BY a.dealer_id,p.code,p.name,p.phone;
 ";
         $all_data = DB::select(DB::raw($query));

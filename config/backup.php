@@ -81,6 +81,8 @@ return [
              */
             'databases' => [
                 'mysql',
+//                'elite',
+                'sales_assistant'
             ],
         ],
 
@@ -110,7 +112,7 @@ return [
             /*
              * The filename prefix used for the backup zip file.
              */
-            'filename_prefix' => 'ELITE_',
+            'filename_prefix' => env('BACKUP_FILENAME_PREFIX',''),
 
             /*
              * The disk names on which the backups will be stored.
@@ -124,7 +126,7 @@ return [
         /*
          * The directory where the temporary files will be stored.
          */
-        'temporary_directory' => storage_path('app/backup-temp'),
+        'temporary_directory' => storage_path('app/backup'),
 
         /*
          * The password to be used for archive encryption.
@@ -167,7 +169,7 @@ return [
         'notifiable' => \Spatie\Backup\Notifications\Notifiable::class,
 
         'mail' => [
-            'to' => 'noman.etrackerbd@gmail.com',
+            'to' => env('BACKUP_CONFIRMATION_EMAIL', 'etrackerbd@gmail.com'),
 
             'from' => [
                 'address' => env('MAIL_FROM_ADDRESS', 'hello@example.com'),

@@ -91,6 +91,66 @@ return [
             'prefix_indexes' => true,
         ],
 
+        'sales_assistant' => [
+            'driver'    => 'mysql',
+            'host'      => env('DB_HOST_SALES_ASSISTANT'),
+            'port'      => env('DB_PORT_SALES_ASSISTANT'),
+            'database'  => env('DB_DATABASE_SALES_ASSISTANT'),
+            'username'  => env('DB_USERNAME_SALES_ASSISTANT'),
+            'password'  => env('DB_PASSWORD_SALES_ASSISTANT'),
+            'charset' => 'utf8mb4',
+        ],
+
+        'poultry_pro' => [
+            'driver'    => 'mysql',
+            'host'      => env('DB_HOST_POULTRY_PRO'),
+            'port'      => env('DB_PORT_POULTRY_PRO'),
+            'database'  => env('DB_DATABASE_POULTRY_PRO'),
+            'username'  => env('DB_USERNAME_POULTRY_PRO'),
+            'password'  => env('DB_PASSWORD_POULTRY_PRO'),
+            'charset' => 'utf8mb4',
+        ],
+
+        'aci_cattle' => [
+            'driver'    => 'mysql',
+            'host'      => env('DB_HOST_ACI_CATTLE'),
+            'port'      => env('DB_PORT_ACI_CATTLE'),
+            'database'  => env('DB_DATABASE_ACI_CATTLE'),
+            'username'  => env('DB_USERNAME_ACI_CATTLE'),
+            'password'  => env('DB_PASSWORD_ACI_CATTLE'),
+            'charset' => 'utf8mb4',
+        ],
+
+        'tamim_main' => [
+            'driver'    => 'mysql',
+            'host'      => env('DB_HOST_TAMIM_MAIN'),
+            'port'      => env('DB_PORT_TAMIM_MAIN'),
+            'database'  => env('DB_DATABASE_TAMIM_MAIN'),
+            'username'  => env('DB_USERNAME_TAMIM_MAIN'),
+            'password'  => env('DB_PASSWORD_TAMIM_MAIN'),
+            'charset' => 'utf8mb4',
+        ],
+
+        'tamim_electropac' => [
+            'driver'    => 'mysql',
+            'host'      => env('DB_HOST_TAMIM_ELECTROPAC'),
+            'port'      => env('DB_PORT_TAMIM_ELECTROPAC'),
+            'database'  => env('DB_DATABASE_TAMIM_ELECTROPAC'),
+            'username'  => env('DB_USERNAME_TAMIM_ELECTROPAC'),
+            'password'  => env('DB_PASSWORD_TAMIM_ELECTROPAC'),
+            'charset' => 'utf8mb4',
+        ],
+
+        'elite' => [
+            'driver'    => 'mysql',
+            'host'      => env('DB_HOST_ELITE'),
+            'port'      => env('DB_PORT_ELITE'),
+            'database'  => env('DB_DATABASE_ELITE'),
+            'username'  => env('DB_USERNAME_ELITE'),
+            'password'  => env('DB_PASSWORD_ELITE'),
+            'charset' => 'utf8mb4',
+        ],
+
     ],
 
     /*
