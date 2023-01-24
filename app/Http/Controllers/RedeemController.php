@@ -98,6 +98,7 @@ GROUP BY a.painter_id,p.code,p.name,p.phone
                     'forward_point' => $qp->carry_forward_point,
                     'from_code' => $code,
                     'process_date' => $start_date,
+                    'created_at' => Carbon::now(),
                 ];
             })->toArray();
 
@@ -210,6 +211,7 @@ GROUP BY a.dealer_id,p.code,p.name,p.phone;
                     'forward_point' => $qp->carry_forward_point,
                     'from_code' => $code,
                     'process_date' => $start_date,
+                    'created_at' => Carbon::now(),
                 ];
             })->toArray();
 
