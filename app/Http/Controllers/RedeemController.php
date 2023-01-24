@@ -44,6 +44,7 @@ class RedeemController extends Controller
     function painterQuery($code, $start_date, $end_date)
     {
         info($code);
+        DB::beginTransaction();
         try {
             $query =
                 "SELECT a.painter_id,(a.volumes) volumes,SUM(a.scan_point) total_scan_point,SUM(a.bonus_point) bonus_point,
@@ -147,6 +148,7 @@ GROUP BY a.painter_id,p.code,p.name,p.phone
                 'to_code'=>$code
             ]);
             DB::table('redeem_carry_forwards')->insert($forward_point);
+            DB::commit();
         }catch (\Exception $error) {
             DB::rollBack();
             Log::emergency($error);
