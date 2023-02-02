@@ -40,4 +40,14 @@ Route::get('backup-database', function (){
    return \Illuminate\Support\Facades\Artisan::call('backup:run --only-db');
 });
 
+Route::resource('backup',\App\Http\Controllers\DatabaseBackupController::class);
+
+Route::get('export', [\App\Http\Controllers\ExportController::class,'painterInfo'])->name('exportData');
+
+Route::get('datatable', [\App\Http\Controllers\DataTableController::class,'getPosts'])->name('post.datatable');
+Route::get('datatable/{type}', [\App\Http\Controllers\DataTableController::class,'getTableType'])->name('post.datatable.type');
+
+Route::get('storeTransfer',[\App\Http\Controllers\VolumeController::class, 'transferData']);
+
+
 

@@ -151,6 +151,16 @@ return [
             'charset' => 'utf8mb4',
         ],
 
+        'advance_poultry' => [
+            'driver'    => 'mysql',
+            'host'      => env('DB_HOST_ADVANCE_POULTRY'),
+            'port'      => env('DB_PORT_ADVANCE_POULTRY'),
+            'database'  => env('DB_DATABASE_ADVANCE_POULTRY'),
+            'username'  => env('DB_USERNAME_ADVANCE_POULTRY'),
+            'password'  => env('DB_PASSWORD_ADVANCE_POULTRY'),
+            'charset' => 'utf8mb4',
+        ],
+
     ],
 
     /*

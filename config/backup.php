@@ -80,9 +80,13 @@ return [
              * For a complete list of available customization options, see https://github.com/spatie/db-dumper
              */
             'databases' => [
-                'mysql',
-//                'elite',
-                'sales_assistant'
+//                'mysql',
+                'sales_assistant',
+                'poultry_pro',
+                'aci_cattle',
+                'tamim_main',
+                'tamim_electropac',
+                'advance_poultry'
             ],
         ],
 
@@ -112,7 +116,7 @@ return [
             /*
              * The filename prefix used for the backup zip file.
              */
-            'filename_prefix' => env('BACKUP_FILENAME_PREFIX',''),
+            'filename_prefix' => env('BACKUP_FILENAME_PREFIX', ''),
 
             /*
              * The disk names on which the backups will be stored.

@@ -5,15 +5,15 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class VolumeTransfer extends Model
+class Category extends Model
 {
     use HasFactory;
 
-    protected $table = 'volume_tranfers';
+    protected $connection = 'mysql';
 
     protected $fillable = [
-        'basegroup_id',
-        'is_complete',
-        'original_painter_point'
+      'name',
+      'slug',
+      'description',
     ];
 }
